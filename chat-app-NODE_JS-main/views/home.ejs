@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Practicing</title>
+    <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <div class="chat1">
+        <div class="chat"></div>
+    </div>
+    <div class="cont">
+        <input type="text" placeholder="Enter the Message" id="a" class="content">
+        <button onclick="sendMsg()">Send</button>
+    </div>
+    <script>
+        const socket=io('https://chat-web-nodejs.herokuapp.com');
+        let chat=document.querySelector('.chat');
+        let url=window.location.href;
+        url=new URL(url);
+        let id=url.searchParams.get('id'), rn=url.searchParams.get('rn');
+        socket.auth={
+            username:id,
+            rn:rn
+        }
+        socket.on('msg', (data)=>{
+            let chat1=document.querySelector('.chat1');
+            let receiver=document.querySelector('.receiver');
+            chat.innerHTML+="<h3 class='receiver'>"+data+"</h3>"
+            chat1.scrollTop=chat1.scrollHeight+100;
+        });
+        function sendMsg(){
+            let chat1=document.querySelector('.chat1');
+            const data=document.querySelector('.content');
+            chat1.scrollTop=chat1.scrollHeight+100;
+            chat.innerHTML+="<h3 class='me'>"+data.value+"</h3>"
+            socket.emit('msg', data.value);
+            data.value='';
+        }
+    </script>
+</body>
+</html>
